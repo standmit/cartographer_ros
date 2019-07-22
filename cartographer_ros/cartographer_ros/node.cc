@@ -101,6 +101,8 @@ Node::Node(
   constraint_list_publisher_ =
       node_handle_.advertise<::visualization_msgs::MarkerArray>(
           kConstraintListTopic, kLatestOnlyPublisherQueueSize);
+  transform_publisher_ = node_handle_.advertise<::geometry_msgs::PoseStamped>(
+		  "cartographer_pose", 1);
   service_servers_.push_back(node_handle_.advertiseService(
       kSubmapQueryServiceName, &Node::HandleSubmapQuery, this));
   service_servers_.push_back(node_handle_.advertiseService(
@@ -245,7 +247,18 @@ void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
             trajectory_state.trajectory_options.published_frame;
         stamped_transform.transform = ToGeometryMsgTransform(
             tracking_to_local * (*trajectory_state.published_to_tracking));
-        stamped_transforms.push_back(stamped_transform);
+
+        if (!trajectory_state.trajectory_options.publish_local_transform){
+            stamped_transforms.push_back(stamped_transform);
+        } else {
+        	tf::StampedTransform tf_stamped_transform;
+        	tf::transformStampedMsgToTF(stamped_transform, tf_stamped_transform);
+        	tf::Stamped<tf::Transform> st_tr(tf_stamped_transform, tf_stamped_transform.stamp_, tf_stamped_transform.frame_id_);
+			geometry_msgs::PoseStamped local_pose;
+			tf::poseStampedTFToMsg(st_tr, local_pose);
+			transform_publisher_.publish(local_pose);
+        }
+
 
         tf_broadcaster_.sendTransform(stamped_transforms);
       } else {

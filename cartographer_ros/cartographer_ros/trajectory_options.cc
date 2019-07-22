@@ -55,6 +55,7 @@ TrajectoryOptions CreateTrajectoryOptions(
   options.use_odometry = lua_parameter_dictionary->GetBool("use_odometry");
   options.use_nav_sat = lua_parameter_dictionary->GetBool("use_nav_sat");
   options.use_landmarks = lua_parameter_dictionary->GetBool("use_landmarks");
+  options.publish_local_transform = lua_parameter_dictionary->GetBool("publish_local_transform");
   options.publish_frame_projected_to_2d =
       lua_parameter_dictionary->GetBool("publish_frame_projected_to_2d");
   options.num_laser_scans =
@@ -114,6 +115,7 @@ bool FromRosMessage(const cartographer_ros_msgs::TrajectoryOptions& msg,
   options->use_odometry = msg.use_odometry;
   options->use_nav_sat = msg.use_nav_sat;
   options->use_landmarks = msg.use_landmarks;
+  options->publish_local_transform = msg.publish_local_transform;
   options->publish_frame_projected_to_2d = msg.publish_frame_projected_to_2d;
   options->num_laser_scans = msg.num_laser_scans;
   options->num_multi_echo_laser_scans = msg.num_multi_echo_laser_scans;
@@ -145,6 +147,7 @@ cartographer_ros_msgs::TrajectoryOptions ToRosMessage(
   msg.use_odometry = options.use_odometry;
   msg.use_nav_sat = options.use_nav_sat;
   msg.use_landmarks = options.use_landmarks;
+  msg.publish_local_transform = options.publish_local_transform;
   msg.publish_frame_projected_to_2d = options.publish_frame_projected_to_2d;
   msg.num_laser_scans = options.num_laser_scans;
   msg.num_multi_echo_laser_scans = options.num_multi_echo_laser_scans;
