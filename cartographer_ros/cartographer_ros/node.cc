@@ -42,6 +42,7 @@
 #include "sensor_msgs/PointCloud2.h"
 #include "tf2_eigen/tf2_eigen.h"
 #include "visualization_msgs/MarkerArray.h"
+#include <tf2_msgs/TFMessage.h>
 
 namespace cartographer_ros {
 
@@ -101,8 +102,9 @@ Node::Node(
   constraint_list_publisher_ =
       node_handle_.advertise<::visualization_msgs::MarkerArray>(
           kConstraintListTopic, kLatestOnlyPublisherQueueSize);
-  transform_publisher_ = node_handle_.advertise<::geometry_msgs::PoseStamped>(
-		  "cartographer_pose", 1);
+  transform_publisher_ =
+	  node_handle_.advertise<::tf2_msgs::TFMessage>(
+			  "cartographer_tfs", 1);
   service_servers_.push_back(node_handle_.advertiseService(
       kSubmapQueryServiceName, &Node::HandleSubmapQuery, this));
   service_servers_.push_back(node_handle_.advertiseService(
@@ -248,19 +250,18 @@ void Node::PublishTrajectoryStates(const ::ros::WallTimerEvent& timer_event) {
         stamped_transform.transform = ToGeometryMsgTransform(
             tracking_to_local * (*trajectory_state.published_to_tracking));
 
-        if (!trajectory_state.trajectory_options.publish_local_transform){
-            stamped_transforms.push_back(stamped_transform);
+        if (trajectory_state.trajectory_options.publish_transforms){
+        	tf2_msgs::TFMessage cart_tfs_msg;
+        	cart_tfs_msg.transforms = stamped_transforms;
+        	cart_tfs_msg.transforms.push_back(stamped_transform);
+        	transform_publisher_.publish(cart_tfs_msg);
         } else {
-        	tf::StampedTransform tf_stamped_transform;
-        	tf::transformStampedMsgToTF(stamped_transform, tf_stamped_transform);
-        	tf::Stamped<tf::Transform> st_tr(tf_stamped_transform, tf_stamped_transform.stamp_, tf_stamped_transform.frame_id_);
-			geometry_msgs::PoseStamped local_pose;
-			tf::poseStampedTFToMsg(st_tr, local_pose);
-			transform_publisher_.publish(local_pose);
+        	stamped_transforms.push_back(stamped_transform);
         }
-
-
         tf_broadcaster_.sendTransform(stamped_transforms);
+
+
+
       } else {
         stamped_transform.header.frame_id = node_options_.map_frame;
         stamped_transform.child_frame_id =

@@ -29,6 +29,7 @@ set(PACKAGE_DEPENDENCIES
   sensor_msgs
   std_msgs
   tf2
+  tf2_msgs
   tf2_eigen
   tf2_ros
   urdf
