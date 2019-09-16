@@ -19,7 +19,7 @@
 
   <node name="cartographer_node" machine="nuc" pkg="cartographer_ros"
       type="cartographer_node"
-      args="$(eval '-configuration_directory ' + arg('local_config_dir') if arg('simulation') == True else arg('target_config_dir') + ' -configuration_basename ' + arg('lua_filename'))"
+      args="$(eval '-configuration_directory ' + (arg('local_config_dir') if arg('simulation') == True else arg('target_config_dir')) + ' -configuration_basename ' + arg('lua_filename'))"
       output="screen">
 
     <remap from="points2_1" to="$(arg points2_1)" />
