@@ -14,10 +14,12 @@
   <arg name="odom_topic" default="cart_odom" />
   <arg name="simulation" />
 
+  <arg name="local_config_dir" value="$(find cartographer_ros)/configuration_files" />
+  <arg name="target_config_dir" value="/home/ubuntu/pathfinder/cartographer_ws/install_isolated/share/cartographer_ros/configuration_files" />
+
   <node name="cartographer_node" machine="nuc" pkg="cartographer_ros"
-      type="cartographer_node" args="
-          -configuration_directory $(eval '$(find cartographer_ros)/configuration_files' if arg('simulation') == True else '/home/ubuntu/pathfinder/cartographer_ws/install_isolated/share/cartographer_ros/configuration_files') 
-          -configuration_basename $(arg lua_filename)"
+      type="cartographer_node"
+      args="$(eval '-configuration_directory ' + arg('local_config_dir') if arg('simulation') == True else arg('target_config_dir') + ' -configuration_basename ' + arg('lua_filename'))"
       output="screen">
 
     <remap from="points2_1" to="$(arg points2_1)" />
