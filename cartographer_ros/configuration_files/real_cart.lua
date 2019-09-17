@@ -29,12 +29,12 @@ options = {
   use_nav_sat = false,
   use_landmarks = false,
 
-  num_laser_scans = 0,
+  num_laser_scans = 1,
 
   num_multi_echo_laser_scans = 0,
   num_subdivisions_per_laser_scan = 1,
 
-  num_point_clouds = 2,
+  num_point_clouds = 1,
 
   lookup_transform_timeout_sec = 0.2,
 
@@ -55,7 +55,7 @@ MAP_BUILDER.num_background_threads = 4
 
 
 -- Local SLAM
-TRAJECTORY_BUILDER_3D.num_accumulated_range_data=2 -- 33
+TRAJECTORY_BUILDER_3D.num_accumulated_range_data=3 -- 33
 -- TRAJECTORY_BUILDER_3D.voxel_filter_size = 0.15 -- 0.15
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.translation_weight = 10 -- 5.  
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.rotation_weight = 220. -- 4e2
@@ -70,8 +70,8 @@ POSE_GRAPH.optimization_problem.ceres_solver_options.max_num_iterations = 10 -- 
 POSE_GRAPH.optimization_problem.fix_z_in_3d = true
 POSE_GRAPH.optimization_problem.local_slam_pose_translation_weight = 1e5
 POSE_GRAPH.optimization_problem.local_slam_pose_rotation_weight = 1e5
-POSE_GRAPH.optimization_problem.odometry_translation_weight = 1e11
-POSE_GRAPH.optimization_problem.odometry_rotation_weight = 1e15
+POSE_GRAPH.optimization_problem.odometry_translation_weight = 1e3
+POSE_GRAPH.optimization_problem.odometry_rotation_weight = 1e3
 
 POSE_GRAPH.constraint_builder.sampling_ratio = 0.03 -- 0.3
 POSE_GRAPH.constraint_builder.min_score = 0.62 -- 0.55
