@@ -34,7 +34,7 @@ options = {
   num_multi_echo_laser_scans = 0,
   num_subdivisions_per_laser_scan = 1,
 
-  num_point_clouds = 1,
+  num_point_clouds = 2,
 
   lookup_transform_timeout_sec = 0.2,
 
@@ -54,7 +54,7 @@ MAP_BUILDER.num_background_threads = 4 -- 7
 
 
 -- Local SLAM
-TRAJECTORY_BUILDER_3D.num_accumulated_range_data=32 -- 32 chunk in 1 ouster msg + 2 Hokuyo msg
+TRAJECTORY_BUILDER_3D.num_accumulated_range_data=64 -- 32 chunk in 1 ouster msg + 2 Hokuyo msg
 -- TRAJECTORY_BUILDER_3D.voxel_filter_size = 0.15 -- 0.15
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.translation_weight = 10 -- 5.  
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.rotation_weight = 220. -- 220. -- 4e2
