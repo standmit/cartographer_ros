@@ -46,7 +46,11 @@ SensorBridge::SensorBridge(
     carto::mapping::TrajectoryBuilderInterface* const trajectory_builder)
     : num_subdivisions_per_laser_scan_(num_subdivisions_per_laser_scan),
       tf_bridge_(tracking_frame, lookup_transform_timeout_sec, tf_buffer),
-      trajectory_builder_(trajectory_builder) {}
+      trajectory_builder_(trajectory_builder),
+      last_odom_time(0.),
+      last_imu_time(0.),
+      first_odom_run(true),
+      first_imu_run(true) {}
 
 std::unique_ptr<carto::sensor::OdometryData> SensorBridge::ToOdometryData(
     const nav_msgs::Odometry::ConstPtr& msg) {
@@ -63,6 +67,15 @@ std::unique_ptr<carto::sensor::OdometryData> SensorBridge::ToOdometryData(
 
 void SensorBridge::HandleOdometryMessage(
     const std::string& sensor_id, const nav_msgs::Odometry::ConstPtr& msg) {
+  if (first_odom_run) {
+    last_odom_time = msg->header.stamp;
+    first_odom_run = false;
+  }
+  if (last_odom_time >= msg->header.stamp) {
+    ROS_WARN("Bad odometry time. Skip message.");
+     return;
+  }
+
   std::unique_ptr<carto::sensor::OdometryData> odometry_data =
       ToOdometryData(msg);
   if (odometry_data != nullptr) {
@@ -136,6 +149,14 @@ std::unique_ptr<carto::sensor::ImuData> SensorBridge::ToImuData(
 
 void SensorBridge::HandleImuMessage(const std::string& sensor_id,
                                     const sensor_msgs::Imu::ConstPtr& msg) {
+  if (first_imu_run) {
+    last_imu_time = msg->header.stamp;
+    first_imu_run = false;
+  }
+  if (last_imu_time >= msg->header.stamp) {
+    ROS_WARN("Bad imu time. Skip message.");
+    return;
+  }
   std::unique_ptr<carto::sensor::ImuData> imu_data = ToImuData(msg);
   if (imu_data != nullptr) {
     trajectory_builder_->AddSensorData(

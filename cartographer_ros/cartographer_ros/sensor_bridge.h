@@ -93,6 +93,10 @@ class SensorBridge {
 
   ::cartographer::common::optional<::cartographer::transform::Rigid3d>
       ecef_to_local_frame_;
+  ros::Time last_odom_time;
+  ros::Time last_imu_time;
+  bool first_odom_run;
+  bool first_imu_run;
 };
 
 }  // namespace cartographer_ros
