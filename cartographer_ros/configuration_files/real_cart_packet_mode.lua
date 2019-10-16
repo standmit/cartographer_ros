@@ -25,7 +25,7 @@ options = {
   provide_odom_frame = true,
   publish_transforms = false,
   publish_frame_projected_to_2d = false,
-  use_odometry = false,
+  use_odometry = true,
   use_nav_sat = false,
   use_landmarks = false,
 
