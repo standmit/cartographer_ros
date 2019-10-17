@@ -18,7 +18,7 @@ include "trajectory_builder.lua"
 options = {
   map_builder = MAP_BUILDER,
   trajectory_builder = TRAJECTORY_BUILDER,
-  map_frame = "g_origin",
+  map_frame = "origin",
   tracking_frame = "os1_lidar",
   published_frame = "g_base_link",
   odom_frame = "g_odom",
