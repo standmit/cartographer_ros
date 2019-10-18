@@ -25,7 +25,7 @@ options = {
   provide_odom_frame = true,
   publish_transforms = false,
   publish_frame_projected_to_2d = false,
-  use_odometry = true,
+  use_odometry = false,
   use_nav_sat = false,
   use_landmarks = false,
 
@@ -54,7 +54,7 @@ MAP_BUILDER.num_background_threads = 4 -- 7
 
 
 -- Local SLAM
-TRAJECTORY_BUILDER_3D.num_accumulated_range_data=64 -- 32 chunk in 1 ouster msg + 2 Hokuyo msg
+TRAJECTORY_BUILDER_3D.num_accumulated_range_data=128 -- 32 chunk in 1 ouster msg + 2 Hokuyo msg
 -- TRAJECTORY_BUILDER_3D.voxel_filter_size = 0.15 -- 0.15
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.translation_weight = 10 -- 5.  
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.rotation_weight = 220. -- 220. -- 4e2
