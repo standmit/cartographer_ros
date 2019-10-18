@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+	
+    <arg name="points2" value="/os1_cloud_node/points" />
+    <arg name="imu" value="/os1_cloud_node/imu" />
+    <arg name="map" value="/google_map" />
+    <arg name="lua_filename" value="ouster_cart" />
+
+    <param name="/use_sim_time" value="true" />
+
+    <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node" args="
+            -configuration_directory $(find cartographer_ros)/configuration_files
+            -configuration_basename $(arg lua_filename).lua"
+        output="screen">
+
+      <remap from="points2" to="$(arg points2)" />
+      <remap from="imu" to="$(arg imu)" />
+    </node>
+
+
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+        type="cartographer_occupancy_grid_node" args="-resolution 0.05" >
+        <remap from="map" to="$(arg map)" />
+    </node>
+
+
+   <include file="$(find voxblox_skeleton_planner)/launch/ntr_voxblox_node.launch">
+        <arg name="pointcloud_topic" value="$(arg points2)" />
+    </include>
+
+
+	<param name="robot_description" textfile="$(find cartographer_ros)/urdf/os1_sensor.urdf" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+	
+	<arg name="bag_file" value="/home/ubuntu/Downloads/ouster_dataset/hor_512_10_part/ouster_horizontal_512x10_pf3.bag" />
+	<node name="bag_player" pkg="rosbag" type="play" args="$(arg bag_file) --clock" />
+ 
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find cartographer_ros)/rviz/os_1.rviz" required="true" />
+
+</launch>

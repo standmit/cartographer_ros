@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+
+<launch>
+    <arg name="file_name" />
+    <node name="record" pkg="rosbag" type="record" args="-O /home/ubuntu/ros/cart_bags/$(arg file_name).bag /velodyne_vert/points /lidar/scan /imu_ideal_cart /cart_odom /clock" />
+
+</launch>

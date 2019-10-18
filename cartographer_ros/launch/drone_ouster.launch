@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find pathfinder)/launch/machines.launch" />
+    <param name="/use_sim_time" value="true" />
+
+
+    <arg name="points2" value="/os1_cloud_node/points" />
+    <arg name="scan" value="/lidar/scan" />
+    <arg name="imu" value="/os1_cloud_node/imu/filtered" />
+    <arg name="odom" value="/stereosfm/odom" />
+    <arg name="map" value="/google_map" />
+    <arg name="lua_filename" value="drone_cart" />
+
+    <param name="/use_sim_time" value="true" />
+
+    <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node" args="
+            -configuration_directory $(find cartographer_ros)/configuration_files
+            -configuration_basename $(arg lua_filename).lua"
+        output="screen">
+
+      <remap from="points2" to="$(arg points2)" />
+      <remap from="scan" to="$(arg scan)" />
+      <remap from="imu" to="$(arg imu)" />
+      <remap from="odom" to="$(arg odom)" />
+    </node>
+
+
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+        type="cartographer_occupancy_grid_node" args="-resolution 0.05" >
+        <remap from="map" to="$(arg map)" />
+    </node>
+
+
+    <arg name="pcl_agg_topic" value="/depth/points"/>
+    <node name="relay_points1" pkg="topic_tools" type="relay" args="/os1_cloud_node/points $(arg pcl_agg_topic)" />
+    <node name="relay_points2" pkg="topic_tools" type="relay" args="/lidar/points $(arg pcl_agg_topic)" />
+
+    <include file="$(find voxblox_skeleton_planner)/launch/total_skeleton.launch">
+        <arg name="pointcloud_topic" value="$(arg pcl_agg_topic)" />
+        <arg name="machine" value="gcs" />
+    </include>
+
+    <param name="robot_description" textfile="$(find cartographer_ros)/urdf/os1_sensor.urdf" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <arg name="base_frame" value="base_link" />
+    <node pkg="tf" type="static_transform_publisher" name="world2origin" args="0 0 0 0 0 0 world  g_origin  4"/>
+    <node pkg="tf" type="static_transform_publisher" name="g_base_link2lbase_link" args="0 0 0 0 0 0 g_base_link $(arg base_frame)  4"/>
+    <node pkg="tf" type="static_transform_publisher" name="base_link2lidar" args="-0.24 0 -0.10   3.1415 0 1.5708 $(arg base_frame) lidar  4" ns="/lidar" />
+    <node pkg="tf" type="static_transform_publisher" name="base_link2ouster" args="-0.003 0 0.244   3.1415 0 0 $(arg base_frame) os1_sensor  4" />
+
+    <arg name="bag_file" value="/home/ubuntu/ros/floor_4_filtered2.bag" />
+    <node name="bag_player" pkg="rosbag" type="play" args="$(arg bag_file) --clock" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find cartographer_ros)/rviz/drone_ouster.rviz" required="true" />
+
+</launch>
