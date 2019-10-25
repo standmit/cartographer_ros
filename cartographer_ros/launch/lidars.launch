@@ -5,6 +5,7 @@
   <arg name="points2" />
   <arg name="points2_1" />
   <arg name="points2_2" />
+  <arg name="points2_3" />
   <arg name="imu" />
   <arg name="map" />
   <arg name="lua_filename" />
@@ -24,6 +25,7 @@
 
     <remap from="points2_1" to="$(arg points2_1)" />
     <remap from="points2_2" to="$(arg points2_2)" />
+    <remap from="points2_3" to="$(arg points2_3)" />
 
     <remap from="imu" to="$(arg imu)" />
     <remap from="odom" to="$(arg odom_topic)" />
