@@ -18,14 +18,14 @@ include "trajectory_builder.lua"
 options = {
   map_builder = MAP_BUILDER,
   trajectory_builder = TRAJECTORY_BUILDER,
-  map_frame = "g_origin",
-  tracking_frame = "mg10",
+  map_frame = "origin",
+  tracking_frame = "os1_imu",
   published_frame = "g_base_link",
   odom_frame = "g_odom",
   provide_odom_frame = true,
   publish_transforms = false,
   publish_frame_projected_to_2d = false,
-  use_odometry = true,
+  use_odometry = false,
   use_nav_sat = false,
   use_landmarks = false,
 
@@ -34,7 +34,7 @@ options = {
   num_multi_echo_laser_scans = 0,
   num_subdivisions_per_laser_scan = 1,
 
-  num_point_clouds = 2,
+  num_point_clouds = 3,
 
   lookup_transform_timeout_sec = 0.2,
 
@@ -55,7 +55,7 @@ MAP_BUILDER.num_background_threads = 4
 
 
 -- Local SLAM
-TRAJECTORY_BUILDER_3D.num_accumulated_range_data=2
+TRAJECTORY_BUILDER_3D.num_accumulated_range_data=5
 -- TRAJECTORY_BUILDER_3D.voxel_filter_size = 0.15 -- 0.15
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.translation_weight = 10 -- 5.  
 TRAJECTORY_BUILDER_3D.ceres_scan_matcher.rotation_weight = 220. -- 4e2
